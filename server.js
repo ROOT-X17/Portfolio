@@ -1,15 +1,18 @@
 const http = require('http');
-const fs = require('fs')
-http.createServer(function (req, res) {
-  res.writeHead(200, {'content-type' : 'text/html'});
-  fs.readFile('index.html', function (error, data){
-    if(error){
-      res.writeHead(404)
-      res.write('Error page not found')
-    }else{
-      res.write(data)
-    }
-    res.end();   
-  })
+const url = require('url');
+const fs = require('fs');
 
-}).listen(8000);
+http.createServer(function (req, res) {
+  var q = url.parse(req.url, true);
+  var filename = "." + q.pathname;
+  fs.readFile(filename, function(err, data) {
+    if (err) {
+      res.writeHead(404, {'Content-Type': 'text/html'});
+      return res.end("404 Not Found");
+    } 
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    return res.end();
+    
+  });
+}).listen(8000); 
